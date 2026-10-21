@@ -1,83 +1,319 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MusiGo - Musique</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #10101b;
-      color: white;
-    }
-
-    header {
-      background: #191927;
-      padding: 20px;
-      color: #24e6a0;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    main {
-      padding: 24px 18px;
-      text-align: center;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 0;
-      border-radius: 25px;
-      margin: 15px 0;
-    }
-
-    .music {
-      background: #202033;
-      padding: 25px 15px;
-      border-radius: 18px;
-      margin-top: 25px;
-    }
-
-    button {
-      background: #24e6a0;
-      border: 0;
-      padding: 12px 22px;
-      border-radius: 25px;
-      font-weight: bold;
-    }
-
-    footer {
-      padding: 25px;
-      text-align: center;
-      color: #aaa;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10101c">
+<title>MusiGo - Musique</title>
+<style>
+:root{--bg:#10101c;--panel:#202033;--green:#20e0a0;--text:#fff;--muted:#aaa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{padding:18px 20px;background:#191929;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.logo{font-size:27px;font-weight:bold;color:var(--green)}
+button,input{font:inherit}
+button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:bold}
+.primary{background:var(--green);color:#10101c}
+.secondary{background:#303047;color:white}
+nav{display:flex;gap:8px;overflow:auto;padding:12px;background:#191929}
+nav button{background:transparent;color:#ddd;white-space:nowrap}
+nav button.active{background:var(--green);color:#10101c}
+main{max-width:1000px;margin:auto;padding:20px}
+.hero{padding:28px 18px;text-align:center;border-radius:22px;background:linear-gradient(135deg,#252541,#143b3b)}
+.hero h1{font-size:clamp(28px,6vw,44px);margin:8px 0}
+.search{width:100%;padding:15px;border-radius:30px;border:2px solid #444;background:white;color:#111;margin:20px 0}
+h2{margin-top:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:14px}
+.card{background:var(--panel);border-radius:17px;padding:15px;min-width:0}
+.cover{height:120px;border-radius:13px;background:linear-gradient(135deg,#174f4b,#47416b);display:grid;place-items:center;font-size:42px;margin-bottom:12px}
+.card p{color:var(--muted);font-size:14px}
+.card button{margin:4px 2px 0 0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input[type="text"],input[type="email"],input[type="password"]{padding:13px;border-radius:10px;border:1px solid #555;background:#191929;color:white;width:100%;margin:7px 0}
+input[type="file"]{max-width:100%;margin:12px 0}
+.player{position:sticky;bottom:0;background:#191929;border-top:1px solid #3a3a50;padding:14px 18px;z-index:4}
+.player-title{font-weight:bold}
+.player small{color:var(--muted)}
+.player-controls{display:flex;justify-content:center;align-items:center;gap:15px;margin:8px}
+.player-controls button{border-radius:50%;width:45px;height:45px;padding:0}
+input[type="range"]{width:100%;accent-color:var(--green)}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+footer{text-align:center;color:var(--muted);padding:28px}
+.notice{background:#252541;padding:13px;border-radius:12px;color:#ddd}
+@media(min-width:700px){.cover{height:160px}}
+</style>
 </head>
 <body>
-  <header>🎵 MusiGo</header>
+<header>
+<div class="logo">♫ MusiGo</div>
+<button class="primary" onclick="showPage('upload')">＋ Ajouter</button>
+</header>
+<nav>
+<button class="active" data-page="home" onclick="showPage('home',this)">Accueil</button>
+<button data-page="songs" onclick="showPage('songs',this)">Toutes les musiques</button>
+<button data-page="favorites" onclick="showPage('favorites',this)">♥ Favoris</button>
+<button data-page="playlists" onclick="showPage('playlists',this)">Playlists</button>
+<button data-page="artists" onclick="showPage('artists',this)">Artistes</button>
+<button data-page="upload" onclick="showPage('upload',this)">Ajouter</button>
+<button data-page="account" onclick="showPage('account',this)">Mon compte</button>
+</nav>
+<main>
+<section id="home" class="page">
+<div class="hero">
+<h1>Bienvenue sur MusiGo ! 🎵</h1>
+<p>Découvrez votre univers musical.</p>
+<p>Écoutez vos musiques préférées et créez vos playlists.</p>
+</div>
+<input class="search" type="text" placeholder="Rechercher une musique..."
+oninput="searchSongs(this.value)">
+<h2>🔥 Toutes les musiques</h2>
+<div id="homeSongs" class="grid"></div>
+<h2>♥ Vos favoris</h2>
+<div id="homeFavorites" class="grid"></div>
+</section>
 
-  <main>
-    <h1>Bienvenue sur MusiGo !</h1>
-    <p>Découvrez votre univers musical.</p>
+<section id="songs" class="page hidden">
+<h1>Toutes les musiques 🎧</h1>
+<input class="search" placeholder="Rechercher..."
+oninput="searchSongs(this.value)">
+<div id="allSongs" class="grid"></div>
+</section>
 
-    <input type="search" placeholder="Rechercher une musique...">
+<section id="favorites" class="page hidden">
+<h1>Mes favoris ♥</h1>
+<div id="favoriteSongs" class="grid"></div>
+</section>
 
-    <section class="music">
-      <h2>🎧 Votre musique</h2>
-      <p>La musique commence ici !</p>
-      <button onclick="alert('Bienvenue sur MusiGo !')">
-        Découvrir
-      </button>
-    </section>
-  </main>
+<section id="playlists" class="page hidden">
+<h1>Mes playlists 📂</h1>
+<input id="playlistName" type="text" placeholder="Nom de la playlist">
+<button class="primary" onclick="createPlaylist()">Créer</button>
+<div id="playlistList"></div>
+</section>
 
-  <footer>© 2026 MusiGo</footer>
+<section id="artists" class="page hidden">
+<h1>Artistes 🎤</h1>
+<div class="card">
+<div class="cover">🎙️</div>
+<h3>Espace artiste</h3>
+<p>Ajoutez vos propres morceaux et présentez votre musique.</p>
+<button class="primary" onclick="showPage('upload')">Ajouter une musique</button>
+</div>
+</section>
+
+<section id="upload" class="page hidden">
+<h1>Ajouter une musique 🎵</h1>
+<p class="notice">Choisissez un fichier audio depuis votre téléphone.</p>
+<input id="trackTitle" type="text" placeholder="Titre de la musique">
+<input id="artistName" type="text" placeholder="Nom de l'artiste">
+<input id="audioFile" type="file" accept="audio/*">
+<button class="primary" onclick="uploadSong()">Ajouter le morceau</button>
+<p id="uploadMessage" class="muted"></p>
+</section>
+
+<section id="account" class="page hidden">
+<h1>Mon compte 👤</h1>
+<div class="card">
+<p>La connexion sécurisée sera ajoutée ultérieurement.</p>
+<input type="text" placeholder="Nom d'utilisateur" disabled>
+<input type="email" placeholder="Adresse e-mail" disabled>
+<button class="secondary" disabled>Connexion bientôt disponible</button>
+</div>
+</section>
+</main>
+
+<div class="player">
+<div class="player-title" id="playingTitle">Aucune musique sélectionnée</div>
+<small id="playingArtist">Choisissez un morceau</small>
+<audio id="audio" preload="metadata"></audio>
+<input id="progress" type="range" min="0" max="100" value="0"
+oninput="seekAudio(this.value)">
+<div class="player-controls">
+<button class="secondary" onclick="previousSong()">⏮</button>
+<button class="primary" id="playButton" onclick="togglePlay()">▶</button>
+<button class="secondary" onclick="nextSong()">⏭</button>
+<button class="secondary" onclick="toggleFavorite(currentSongId)">♥</button>
+</div>
+</div>
+<footer>© 2026 MusiGo - Votre univers musical</footer>
+<script>
+const audio=document.getElementById('audio');
+let songs=[];
+let currentSongId=null;
+let currentIndex=-1;
+let playlists=JSON.parse(localStorage.getItem('musigo_playlists')||'[]');
+let favorites=JSON.parse(localStorage.getItem('musigo_favorites')||'[]');
+
+function showPage(id,button){
+document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+const b=button||document.querySelector('nav button[data-page="'+id+'"]');
+if(b)b.classList.add('active');
+renderAll();
+}
+
+function escapeHTML(v){
+return String(v).replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+})[c]);
+}
+
+function songCard(s){
+return `<div class="card">
+<div class="cover">♫</div>
+<strong>${escapeHTML(s.title)}</strong>
+<p>${escapeHTML(s.artist)}</p>
+<button class="primary" onclick="playSong('${s.id}')">▶ Écouter</button>
+<button class="secondary" onclick="toggleFavorite('${s.id}')">${favorites.includes(s.id)?'♥':'♡'}</button>
+<button class="secondary" onclick="addToPlaylist('${s.id}')">＋ Playlist</button>
+</div>`;
+}
+
+function renderList(id,list){
+const el=document.getElementById(id);
+if(!el)return;
+el.innerHTML=list.length?list.map(songCard).join(''):
+'<p class="muted">Aucune musique pour le moment.</p>';
+}
+
+function renderAll(){
+renderList('homeSongs',songs);
+renderList('allSongs',songs);
+renderList('favoriteSongs',songs.filter(s=>favorites.includes(s.id)));
+renderList('homeFavorites',songs.filter(s=>favorites.includes(s.id)));
+renderPlaylists();
+}
+
+function searchSongs(q){
+q=q.toLowerCase().trim();
+renderList('allSongs',songs.filter(s=>
+s.title.toLowerCase().includes(q)||s.artist.toLowerCase().includes(q)));
+document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+document.getElementById('songs').classList.remove('hidden');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+document.querySelector('nav button[data-page="songs"]').classList.add('active');
+}
+
+function playSong(id){
+const i=songs.findIndex(s=>s.id===id);
+if(i<0)return;
+currentIndex=i;
+currentSongId=id;
+const s=songs[i];
+audio.src=s.url;
+document.getElementById('playingTitle').textContent=s.title;
+document.getElementById('playingArtist').textContent=s.artist;
+audio.play().catch(()=>{});
+}
+
+function togglePlay(){
+if(!audio.src){
+if(songs.length)playSong(songs[0].id);
+else alert('Ajoutez un fichier audio pour commencer.');
+return;
+}
+if(audio.paused)audio.play();
+else audio.pause();
+}
+
+function nextSong(){
+if(songs.length)playSong(songs[(currentIndex+1)%songs.length].id);
+}
+
+function previousSong(){
+if(songs.length)playSong(songs[(currentIndex-1+songs.length)%songs.length].id);
+}
+
+audio.addEventListener('ended',nextSong);
+audio.addEventListener('play',()=>document.getElementById('playButton').textContent='⏸');
+audio.addEventListener('pause',()=>document.getElementById('playButton').textContent='▶');
+audio.addEventListener('timeupdate',()=>{
+if(audio.duration)document.getElementById('progress').value=audio.currentTime/audio.duration*100;
+});
+
+function seekAudio(v){
+if(audio.duration)audio.currentTime=audio.duration*Number(v)/100;
+}
+
+function toggleFavorite(id){
+if(!id)return;
+favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];
+localStorage.setItem('musigo_favorites',JSON.stringify(favorites));
+renderAll();
+}function createPlaylist(){
+const input=document.getElementById('playlistName');
+const name=input.value.trim();
+if(!name)return alert('Entrez un nom de playlist.');
+playlists.push({name,songIds:[]});
+localStorage.setItem('musigo_playlists',JSON.stringify(playlists));
+input.value='';
+renderPlaylists();
+}
+
+function addToPlaylist(id){
+if(!playlists.length){
+showPage('playlists');
+alert('Créez d’abord une playlist.');
+return;
+}
+const choice=prompt('Numéro de playlist :\n'+
+playlists.map((p,i)=>(i+1)+'. '+p.name).join('\n'));
+const i=Number(choice)-1;
+if(!Number.isInteger(i)||!playlists[i])return;
+if(!playlists[i].songIds.includes(id))playlists[i].songIds.push(id);
+localStorage.setItem('musigo_playlists',JSON.stringify(playlists));
+renderPlaylists();
+}
+
+function renderPlaylists(){
+const el=document.getElementById('playlistList');
+if(!el)return;
+el.innerHTML=playlists.length?playlists.map((p,i)=>
+`<div class="card">
+<h3>📂 ${escapeHTML(p.name)}</h3>
+<p>${p.songIds.length} musique(s)</p>
+${p.songIds.map(id=>songs.find(s=>s.id===id)).filter(Boolean)
+.map(s=>'<p>'+escapeHTML(s.title)+' - '+escapeHTML(s.artist)+'</p>').join('')}
+<button class="secondary" onclick="deletePlaylist(${i})">Supprimer</button>
+</div>`).join(''):'<p class="muted">Créez votre première playlist.</p>';
+}
+
+function deletePlaylist(i){
+playlists.splice(i,1);
+localStorage.setItem('musigo_playlists',JSON.stringify(playlists));
+renderPlaylists();
+}
+
+function uploadSong(){
+const file=document.getElementById('audioFile').files[0];
+const title=document.getElementById('trackTitle').value.trim();
+const artist=document.getElementById('artistName').value.trim();
+const message=document.getElementById('uploadMessage');
+if(!file||!title||!artist){
+message.textContent='Remplissez tous les champs et choisissez un fichier audio.';
+return;
+}
+if(!file.type.startsWith('audio/')){
+message.textContent='Choisissez un fichier audio valide.';
+return;
+}
+songs.push({
+id:'song-'+Date.now(),
+title:title,
+artist:artist,
+url:URL.createObjectURL(file)
+});
+message.textContent='Musique ajoutée dans cette session !';
+document.getElementById('trackTitle').value='';
+document.getElementById('artistName').value='';
+document.getElementById('audioFile').value='';
+renderAll();
+showPage('songs');
+}
+
+renderAll();
+</script>
 </body>
 </html>
